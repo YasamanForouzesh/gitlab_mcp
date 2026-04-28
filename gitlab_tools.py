@@ -4,14 +4,14 @@ import gitlab
 
 _instances = {
     "proxy": gitlab.Gitlab(
-        os.getenv("GITLAB_PROXY_URL", ""),
-        private_token=os.getenv("GITLAB_PROXY_TOKEN", ""),
-    ),
+        url=os.getenv("GITLAB_PROXY_URL", ""), 
+        private_token=os.getenv("GITLAB_PROXY_TOKEN", "")),
     "client": gitlab.Gitlab(
-        os.getenv("GITLAB_CLIENT_URL", ""),
+        url=os.getenv("GITLAB_CLIENT_URL", ""),
         private_token=os.getenv("GITLAB_CLIENT_TOKEN", ""),
     ),
 }
+
 
 for _name, _gl_instance in _instances.items():
     try:
@@ -25,3 +25,12 @@ def _gl(name: str) -> gitlab.Gitlab:
     if name not in _instances:
         raise ValueError(f"Unknown GitLab instance name: {name}")
     return _instances[name]
+
+
+def handle_search_code(gl_name: str, query: str, project_id: int):
+    gl = _gl(gl_name)
+    search_kwargs = {"scope": "blobs", "search": query, "get_all": True}
+    target = gl.projects.get(project_id)
+    result = target.search(**search_kwargs)
+    print(result)
+    
