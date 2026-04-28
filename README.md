@@ -14,15 +14,9 @@ A GitLab MCP (Model Context Protocol) server that exposes GitLab functionality a
    uv sync
    ```
 
-2. Create a `.env` file in the project root:
-   ```env
-   GITLAB_TOKEN=your-personal-access-token
-   GITLAB_URL=https://gitlab.com
-   ```
-
 ## Usage with Claude Code
 
-Add the following to your Claude Code MCP settings (`~/.claude/settings.json` or project `.claude/settings.json`):
+Add the following to your Claude Code MCP settings (`~/.claude/settings.json` or project `.claude/settings.json`), replacing the values with your own GitLab URLs and personal access tokens:
 
 ```json
 {
@@ -30,13 +24,32 @@ Add the following to your Claude Code MCP settings (`~/.claude/settings.json` or
     "gitlab-mcp": {
       "command": "uv",
       "args": ["run", "python", "main.py"],
-      "cwd": "/path/to/gitlab_mcp"
+      "cwd": "/path/to/gitlab_mcp",
+      "env": {
+        "GITLAB_PROXY_URL": "https://gitlab.your-proxy.com",
+        "GITLAB_PROXY_TOKEN": "your-proxy-personal-access-token",
+        "GITLAB_CLIENT_URL": "https://gitlab.your-client.com",
+        "GITLAB_CLIENT_TOKEN": "your-client-personal-access-token"
+      }
     }
   }
 }
 ```
 
 Claude Code will automatically start the server and make its tools available.
+
+## Local Development
+
+Create a `.env` file in the project root and run:
+```env
+GITLAB_PROXY_URL=https://gitlab.your-proxy.com
+GITLAB_PROXY_TOKEN=your-proxy-personal-access-token
+GITLAB_CLIENT_URL=https://gitlab.your-client.com
+GITLAB_CLIENT_TOKEN=your-client-personal-access-token
+```
+```bash
+uv run python main.py
+```
 
 ## Development
 
