@@ -14,13 +14,6 @@ _instances = {
 }
 
 
-for _name, _gl_instance in _instances.items():
-    try:
-        _gl_instance.auth()
-        print(f"[gitlab] connected: {_name} ({_gl_instance.url})")
-    except Exception as e:
-        print(f"[gitlab] failed to connect: {_name} ({_gl_instance.url}) — {e}")
-
 
 def _gl(name: str) -> gitlab.Gitlab:
     if name not in _instances:
@@ -76,7 +69,7 @@ def handle_get_mr_diff(gl_name: str, project_id: int, mr_iid: int):
             })
     return result
 
-def load_project_definitions(path: str):
+def load_project_definitions(path: str = "config/project_definitions.json"):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 

@@ -8,52 +8,61 @@ from gitlab_tools import handle_search_code, handle_get_file, handle_find_mr, ha
 
 mcp = FastMCP("gitlab-mcp")
 
-path = "config/project_definitions.json"
 
-with open(path, "r", encoding="utf-8") as f:
-    _PROJECTS = json.load(f)
-
-project_id = _PROJECTS[6]["project_id"]
-
-
-# @mcp.tool()
-# def get_project_definitions() -> list:
-#     """Get all GitLab projects with their ids, source instances, and keywords. Call this first to identify which project_id and gl_name to use before searching."""
-#     return load_project_definitions("config/project_definitions.json")
+@mcp.tool()
+def get_project_definitions() -> list:
+    """Get all GitLab projects with their ids, source instances, and keywords. Call this first to identify which project_id and gl_name to use before searching."""
+    return load_project_definitions("config/project_definitions.json")
 
 
-# @mcp.tool()
-# def search_code(gl_name: str, query: str, project_id: int) -> list:
-#     """Search for code across a GitLab project and return matching file snippets."""
-#     return handle_search_code(gl_name, query, project_id)
+@mcp.tool()
+def search_code(gl_name: str, query: str, project_id: int) -> list:
+    """Search for code across a GitLab project and return matching file snippets.
+
+    Args:
+        gl_name: GitLab instance to use — either 'proxy' or 'client', as returned by get_project_definitions.
+        query: The search string to look for in source code. Use camelCase for client-side/frontend projects and snake_case for backend projects.
+        project_id: The numeric GitLab project ID, as returned by get_project_definitions.
+    """
+    return handle_search_code(gl_name, query, project_id)
 
 
-# @mcp.tool()
-# def get_file(gl_name: str, project_id: int, file_path: str, ref: str = "dev") -> str:
-#     """Get the full content of a file from a GitLab project."""
-#     return handle_get_file(gl_name, project_id, file_path, ref)
+@mcp.tool()
+def get_file(gl_name: str, project_id: int, file_path: str, ref: str = "dev") -> str:
+    """Get the full content of a file from a GitLab project.
+
+    Args:
+        gl_name: GitLab instance to use — either 'proxy' or 'client', as returned by get_project_definitions.
+        project_id: The numeric GitLab project ID, as returned by get_project_definitions.
+        file_path: Full path to the file within the repository (e.g. 'src/api/leads.py').
+        ref: Branch or commit ref to read the file from. Defaults to 'dev'.
+    """
+    return handle_get_file(gl_name, project_id, file_path, ref)
 
 
-# @mcp.tool()
-# def find_mr(gl_name: str, project_id: int, title: str) -> list:
-#     """Find merge requests by title and return their iid, title, and state."""
-#     return handle_find_mr(gl_name, project_id, title)
+@mcp.tool()
+def find_mr(gl_name: str, project_id: int, title: str) -> list:
+    """Find merge requests by title and return their iid, title, and state.
+
+    Args:
+        gl_name: GitLab instance to use — either 'proxy' or 'client', as returned by get_project_definitions.
+        project_id: The numeric GitLab project ID, as returned by get_project_definitions.
+        title: Partial or full MR title to search for.
+    """
+    return handle_find_mr(gl_name, project_id, title)
 
 
-# @mcp.tool()
-# def get_mr_diff(gl_name: str, project_id: int, mr_iid: int) -> list:
-#     """Get the file changes and diffs for a merge request."""
-#     return handle_get_mr_diff(gl_name, project_id, mr_iid)
+@mcp.tool()
+def get_mr_diff(gl_name: str, project_id: int, mr_iid: int) -> list:
+    """Get the file changes and diffs for a merge request.
 
+    Args:
+        gl_name: GitLab instance to use — either 'proxy' or 'client', as returned by get_project_definitions.
+        project_id: The numeric GitLab project ID, as returned by get_project_definitions.
+        mr_iid: The internal ID (iid) of the merge request, as returned by find_mr.
+    """
+    return handle_get_mr_diff(gl_name, project_id, mr_iid)
 
-def main():
-    print(project_id, type(project_id))
-    result = handle_search_code("client", "createUser", 4)
-    print(json.dumps(result, indent=2))
-    file_path = result[0]["filename"]
-    data = handle_get_file("client", 4, file_path)
-    print(data)
 
 if __name__ == "__main__":
-    main()
     mcp.run(transport='stdio')
