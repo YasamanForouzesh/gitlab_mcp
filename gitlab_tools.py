@@ -6,13 +6,12 @@ import json
 _instances = {
     "proxy": gitlab.Gitlab(
         url=os.getenv("GITLAB_PROXY_URL", ""),
-        private_token=os.getenv("GITLAB_PROXY_TOKEN", "https://gitlab.dev.dyl.com")),
+        private_token=os.getenv("GITLAB_PROXY_TOKEN", "")),
     "client": gitlab.Gitlab(
         url=os.getenv("GITLAB_CLIENT_URL", ""),
-        private_token=os.getenv("GITLAB_CLIENT_TOKEN", "https://gitlab.getdyl.com"),
+        private_token=os.getenv("GITLAB_CLIENT_TOKEN", ""),
     ),
 }
-
 
 
 def _gl(name: str) -> gitlab.Gitlab:
@@ -43,6 +42,7 @@ def handle_search_code(gl_name: str, query: str, project_id: int):
     results = target.search(**search_kwargs)
     return _clean_results(results)
 
+
 def handle_get_file(gl_name: str, project_id: int, file_path: str, ref: str = "dev"):
     gl = _gl(gl_name)
     project = gl.projects.get(project_id)
@@ -69,6 +69,7 @@ def handle_get_mr_diff(gl_name: str, project_id: int, mr_iid: int):
                 "diff": change["diff"],
             })
     return result
+
 
 def load_project_definitions(path: str = "config/project_definitions.json"):
     with open(path, "r", encoding="utf-8") as f:
