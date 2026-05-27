@@ -71,6 +71,6 @@ def handle_get_mr_diff(gl_name: str, project_id: int, mr_iid: int):
     return result
 
 
-def load_project_definitions(path: str = "config/project_definitions.json"):
+def load_project_definitions(path: str = "config/project_definitions_example.json"):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
